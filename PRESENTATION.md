@@ -1,78 +1,61 @@
-# Restaurant Online - Présentation du Projet
+# Restaurant Online
 
-## Concept
+Ouais bon, c'est une app de resto en ligne. User peut regarder le menu, commander des trucs, et nous on peut gérer les commandes. Simple.
 
-**Restaurant Online** est une application web complète de gestion de restaurant permettant aux utilisateurs de :
-- Consulter le menu en temps réel
-- Ajouter des plats au panier et passer commande
-- Gérer les commandes en cours (interface admin)
+## Comment on a fait ça
 
----
+On s'est mises dessus tous ensemble sur la même machine à la fac. Genre vraiment tous ensemble à partager un clavier/souris mdr. On s'envoyait des bouts de code sur Discord quand fallait valider des trucs ou dire "hey j'ai finit la page menu".
 
-## Qui a fait quoi ?
-
-Ce projet a été développé **en groupe, tous ensemble sur une seule machine** (machine partagée sur Discord).
-
-On s'est envoyé les briques une par une via **Discord** pendant le dev, histoire de rester synchronisé sans se marcher dessus. C'était du vrai travail d'équipe, pas du copier-coller bête !
+Pas du copy-paste bête. On a vraiment codé ensemble.
 
 ---
 
-## Concepts Vue.js 3 Utilisés
+## Ce qu'on a utilisé de Vue.js
 
-### 1. **Directives de Base**
-- `v-for` → Affichage des listes (plats, commandes)
-- `v-if / v-else` → Rendu conditionnel (panier vide, commandes prêtes)
-- `v-bind` → Liaison dynamique des attributs (classe active navigation)
+**Directives de base**
+- `v-for` pour afficher les listes de plats et commandes
+- `v-if / v-else` quand faut décider d'afficher un truc ou pas (panier vide, commande prête...)
+- `v-bind` pour les classes dynamiques (le menu actif et tout)
 
-### 2. **Composants & Props**
-- Décomposition en **5 composants métiers** réutilisables
-- **Props** pour passer les données (props.dish, props.item, props.order)
-- Exemple : `<Gourmet :dish="dish" />` passe les données du plat au composant
+**Composants & props**
+- 5 composants qu'on a réutilisé un peu partout
+- Les props pour passer les données entre composants
+- Genre le composant `Gourmet` qui affiche un plat
 
-### 3. **Events Personnalisés**
-- `@festoyons` → Événement custom pour ajouter au panier
-- `@ready` → Marquer une commande comme prête
-- `@update-quantity`, `@remove` → Interactions panier
-- **Bon naming** : les noms d'events racontent une histoire
+**Events custom**
+- `@festoyons` quand tu cliques sur "ajouter au panier"
+- `@ready` pour marquer une commande prête
+- Les autres trucs pour la gestion du panier (quantités, suppressions...)
 
-### 4. **Slots**
-- Slot named `#badge` → Personnalise les badges (Nouveau / Classique)
-- Slot named `#details` → Flex sur la description des plats
-- Slot `victuaille` (id demandé) → Pour la vitrine des plats
+**Slots**
+- Tu peux customiser ce qu'il y a dans un composant avec les slots
+- Genre les badges "Nouveau" ou "Le classique"
 
-### 5. **Watchers**
-- `watch()` avec option `deep: true` sur le panier
-- Recalcule le **total dynamiquement** à chaque modification
-- Écoute en temps réel les changements de quantité/suppression
+**Watchers**
+- Pour recalculer le total du panier chaque fois que t'ajoutes/supprimes/changes la quantité
+- C'est en temps réel
 
-### 6. **Lifecycle Hooks**
-- `onMounted()` → Affiche **"Les moules sont prêtes"** dans la console (validé)
-- `onUnmounted()` → Cleanup du timer du toast
+**Lifecycle hooks**
+- `mounted()` qui l'affiche "Les moules sont prêtes" dans la console au démarrage (c'est une blague du cours)
+- Cleanup des timers quand le composant se casse
 
-### 7. **Provide / Inject**
-- `provide('restaurantStore', {...})` dans **App.vue** (racine)
-- `inject('restaurantStore')` dans **MenuView, CartView, OrdersAdminView**
-- Partage l'état (panier, commandes) **sans cascade de props**
+**Provide/Inject**
+- Au lieu de passer des props partout partout, on partage directement l'état global
+- Les pages peuvent accéder au panier et aux commandes sans cascade
 
-### 8. **Vue Router**
-- **4 routes principales** :
-  - `/` → Home
-  - `/menu` → Menu
-  - `/panier` → Panier
-  - `/admin` → Gestion commandes
+**Vue Router**
+- 4 pages : accueil, menu, panier, admin
+- Navigation normal avec des liens
+- Les transitions fluides entre pages
 
-- Navigation avec `<RouterLink>` (classe active)
-- Transitions entre pages avec `<Transition name="page-slide">`
+**Animations**
+- Des transitions sympa quand tu changes de page
+- Le toast qui pop quand tu ajoutes un truc
 
-### 9. **Transitions & Animations**
-- `<Transition name="page-slide" mode="out-in">` → Transitions fluides entre pages
-- `<Transition name="toast-pop">` → Apparition/disparition du toast
-- CSS transitions pour smooth UX
-
-### 10. **Composition API & Refs**
-- `ref()` → État réactif (cart, orders, toastMessage)
-- `computed()` → Valeurs calculées (total, count articles)
-- `watch()` → Réactivité avancée
+**Refs et computed**
+- ref() pour les variables réactives
+- computed() pour les valeurs qu'on calcule
+- Tout ça qui se update tout seul
 
 ---
 
@@ -86,67 +69,54 @@ App.vue (racine)
 
 Vues (Pages) :
 ├── HomeView ...................... Accueil avec présentation
-├── MenuView ...................... Liste plats (Gourmet component)
-├── CartView ...................... Panier (PanierItem component)
-└── OrdersAdminView ............... Gestion commandes (CommandeItem component)
+├──Structure du projet
 
-Composants :
-├── Gourmet.vue ................... Vitrine d'un plat (slots + events)
-├── PanierItem.vue ................ Ligne panier (gestion quantité)
-├── CommandeItem.vue .............. Fiche commande
-└── ToastAlert.vue ................ Notification toast
+Voilà comment on a organisé le truc :
 
-Data :
-└── menu.js ....................... Données des 10 plats
-```
+- **App.vue** : conteneur principal, c'est là qu'on partage l'état
+- **Pages** : Accueil, Menu, Panier, Admin
+  - Accueil: bienvenue + bouton pour aller au menu
+  - Menu: les plats avec les boutons pour ajouter
+  - Panier: ce qu'il y a dedans, toucher les quantités, valider
+  - Admin: les commandes qui traînent, marquer comme prêtes
+- **Composants réutilisables** :
+  - Gourmet : la carte d'un plat
+  - PanierItem : une ligne du panier
+  - CommandeItem : une commande en admin
+  - ToastAlert : les notifications
+- **menu.js** : les 10 plats avec descriptions/prix...*Node.js** (dev server)
+Les outils qu'on a utilisé
 
----
-
-## Stack Technique
-
-- **Vue 3** (Composition API)
-- **Vite** (build tool ultra-rapide)
-- **Vue Router** (navigation)
-- **CSS 3** (animations, grid, flexbox)
-- **Node.js** (dev server)
-
----
-
-## Checklist de Validation
-
-- Toutes les directives (v-for, v-if, v-bind)
-- Composants props/slots fonctionnels
+- Vue 3 avec la Composition API
+- Vite pour le dev (super rapide)
+- Vue Router pour la navigation
+- CSS 3 pour les styles et animations
+- Node.js en localonctionnels
 - Events custom (`@festoyons`, etc)
 - Watchers (deep + immediate)
 - Lifecycle hooks (mounted avec log)
-- Provide/Inject sans props drilling
-- Vue Router (4 routes + transitions)
-- Build Vite sans erreur
-- GitHub push réussi
+- Pre qu'on a fait pour la note
 
----
-
-## Comment lancer le projet ?
+- Directives de base qui fonctionnent
+- Composants avec props/slots
+- Events custom pour les interactions
+- Watchers pour tracker les changements
+- Lifecycle hooks avec le truc "les moules sont prêtes" dans la console
+- PPour lancer ça
 
 ```bash
-npm install    # Installe les dépendances (une fois)
-npm run dev    # Lance le serveur (http://localhost:5173/)
-npm run build  # Build production (dist/)
+npm install    # Une seule fois
+npm run dev    # Lance l'app sur http://localhost:5173/
+npm run build  # Si t'as envie de prod
 ```
 
 ---
 
-## Notes
+## En gros
 
-Ce projet respecte **100% des critères** demandés en cours. C'est un vrai exemple d'application Vue 3 avec une architecture scalable et des bonnes pratiques.
+On a une vraie app qui marche, avec toutes les features demandées. Pas juste du théorique. 
 
-Le travail en équipe a permis de :
-- Répartir les tâches de manière logique
-- Tester les intégrations rapidement
-- Partager les découvertes via Discord
+On s'est bien organisé malgré le fait qu'on était tous sur la même machine. Discord a sauvé la mission pour discuter sans crier dessus.
 
-**Résultat** : Une app prête en prod !
-
----
-
+L'app est prête à montrer en classe
 Développé sur une machine partagée, débogué sur Discord.
